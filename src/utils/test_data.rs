@@ -2,13 +2,13 @@ use rand::Rng;
 
 use crate::utils_function;
 
-// println!("{}", constant::DATA_SIZE);
+// println!("{}", constant::BATCH_SIZE);
 // println!("Hello, world!");
-// let mut data_arr: [[f32; constant::DATA_SIZE]; constant::X_NUM] = [[0.0; constant::DATA_SIZE]; constant::X_NUM];
+// let mut data_arr: [[f32; constant::BATCH_SIZE]; constant::X_NUM] = [[0.0; constant::BATCH_SIZE]; constant::X_NUM];
 // test_data::random_array_2d(&data_arr);
 // println!("{:?}", data_arr);
 
-// println!("{}", constant::DATA_SIZE);
+// println!("{}", constant::BATCH_SIZE);
 // println!("Hello, world!");
 // let start_num: f32 = 0.0;
 // let mut data_arr_arr_x = Vec::new();
@@ -23,11 +23,11 @@ use crate::utils_function;
 // println!("{:?}", data_arr_arr_x);
 // test_data::print_vec_2d(data_arr_arr_x);
 // get_data_arr_arr_x(&mut data_arr_arr_x);
-// let mut data_arr_y = vec![0; constant::DATA_NUM];
+// let mut data_arr_y = vec![0; constant::DATA_SIZE];
 // test_data::random_x_y(&mut data_arr_arr_x, &mut data_arr_y);
 // println!("{:?}", data_arr_arr_x);
 
-pub fn getRandomTrueFalse() -> bool {
+pub fn get_random_true_false() -> bool {
   let ran_num: i32 = utils_function::get_random_i32(0, 1);
   ran_num != 0
 }
@@ -57,7 +57,7 @@ pub fn random_array(data_arr: &Vec<f32>, from: f32, to: f32) {
   // }
 }
 
-pub fn print_vec_2d(data_arr_arr_x: Vec<&Vec<f32>>) {
+pub fn print_vec_2d(data_arr_arr_x: &Vec<Vec<f32>>) {
   for (i, data_arr) in data_arr_arr_x.iter().enumerate() {
     println!("{:?}", data_arr);
     println!("{:p}", data_arr);

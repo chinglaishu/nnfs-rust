@@ -12,7 +12,9 @@ macro_rules! marco_get_random {
 marco_get_random!(get_random_f32, f32);
 marco_get_random!(get_random_i32, i32);
 
-pub fn getRandomTrueFalse() -> bool {
+pub fn get_random_true_false() -> bool {
   let ran_num: i32 = get_random_i32(0, 1);
   ran_num != 0
 }
+
+
