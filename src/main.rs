@@ -32,8 +32,8 @@ fn main() {
 
   vector::shuffle_x_y(&mut data_vec_vec_x, &mut data_vec_y);
 
-  println!("{:?}", data_vec_vec_x);
-  println!("{:?}", data_vec_y);
+  // println!("{:?}", data_vec_vec_x);
+  // println!("{:?}", data_vec_y);
 
   let mut layer_1 = dense_layer::create_dense_layer(0, DATA_SIZE, DENSE_LAYER_1_NEURON_NUM, 0.0, 0.0, 0.0, 0.0);
   let mut activatioin_relu_1 = activation::marco_create_activation_relu(BATCH_SIZE, DENSE_LAYER_1_NEURON_NUM);
@@ -74,17 +74,20 @@ fn main() {
     predict_vec: vec![0; BATCH_SIZE],
   };
 
-  model.train(&data_vec_vec_x, &data_vec_y, 6, 1);
+  model.load_dense_layer();
 
-  model.save_dense_layer();
+
+  // model.train(&data_vec_vec_x, &data_vec_y, 8, 1);
+
+  // model.save_dense_layer();
 
   let mut test_x: Vec<Vec<f32>> = vec![vec![0.0; constant::DATA_SIZE]; constant::BATCH_SIZE];
   let mut test_y: Vec<usize> = vec![0; constant::BATCH_SIZE];
   vector::random_x_y(&mut test_x, &mut test_y);
   vector::shuffle_x_y(&mut test_x, &mut test_y);
 
-  println!("{:?}", test_x);
-  println!("{:?}", test_y);
+  // println!("{:?}", test_x);
+  // println!("{:?}", test_y);
 
   // let result = utils_function::write_file();
   // match result {

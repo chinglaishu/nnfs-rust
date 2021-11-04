@@ -1,4 +1,6 @@
-use crate::{accuracy::{Accuracy, AccuracyProcess}, activation::{ActivationReLu, ActivationSoftmax, Process}, constant::BATCH_SIZE, dense_layer::{DenseLayer, DenseLayerProcess}, loss::{LossCrossEntropy, LossProcess}, optimizer::{OptimizerAdam, OptimizerProcess}, utils_function, vector};
+use std::collections::HashMap;
+
+use crate::{accuracy::{Accuracy, AccuracyProcess}, activation::{ActivationReLu, ActivationSoftmax, Process}, constant::BATCH_SIZE, dense_layer::{DenseLayer, DenseLayerProcess}, loss::{LossCrossEntropy, LossProcess}, optimizer::{OptimizerAdam, OptimizerProcess}, utils_function::{self, StoreData}, vector, vector_calculate};
 use crate::model_trait::ModelLayerProcess;
 
 #[derive(Debug)]
@@ -23,6 +25,7 @@ pub trait ModelProcess {
   fn model_forward(&mut self, use_input_vec_x: &mut Vec<Vec<f32>>) {}
   fn model_backward(&mut self, output_vec_x: &Vec<Vec<f32>>, true_vec_y: &Vec<usize>) {}
   fn model_update_trainable_layer(&mut self) {}
+  fn load_dense_layer(&mut self) {}
   fn save_dense_layer(&mut self) {}
 }
 
@@ -120,29 +123,60 @@ impl ModelProcess for Model {
       }
     }
   }
-  fn save_dense_layer(&mut self) {
-
+  fn load_dense_layer(&mut self) {
+    let read_result = utils_function::read_file("store_data.json").unwrap();
     for i in 0..self.layer_vec.len() {
       let layer = &mut self.layer_vec[i];
       match layer {
         ModelLayer::ModelDenseLayer(dense_layer) => {
           let id = dense_layer.id;
-          let weight_file_name = format!("store_data/weight_{}.json", id);
-          let weight_result = utils_function::write_file(&dense_layer.weight_vec, &weight_file_name);
+          let weight_str = format!("weight_{}", id);
+          let bias_str = format!("bias {}", id);
 
-          match weight_result {
-            Err(err) => {
-              println!(err);
-            }
-          }
+          let weight_data = read_result.data.get(&weight_str).unwrap();
+          let bias_data = read_result.data.get(&bias_str).unwrap();
+          
+          vector::copy_vector_2d_f32(&mut dense_layer.weight_vec, weight_data);
+          vector::copy_vector_2d_f32(&mut dense_layer.bias_vec, bias_data);
+        },
+        _ => {}
+      }
+    }
 
-          let bias_file_name = format!("store_data/bias_{}.json", id);
-          utils_function::write_file(&dense_layer.bias_vec, &bias_file_name);
+  }
+  fn save_dense_layer(&mut self) {
+    let mut data_map = HashMap::new();
+    for i in 0..self.layer_vec.len() {
+      let layer = &mut self.layer_vec[i];
+      match layer {
+        ModelLayer::ModelDenseLayer(dense_layer) => {
+          let id = dense_layer.id;
+
+          let weight_str = format!("weight_{}", id);
+          let bias_str = format!("bias {}", id);
+
+          let weight_clone: Vec<Vec<f32>> = dense_layer.weight_vec.clone();
+          let bias_clone: Vec<Vec<f32>> = dense_layer.bias_vec.clone();
+
+          data_map.insert(weight_str, weight_clone);
+          data_map.insert(bias_str, bias_clone);
 
         },
         _ => {}
       }
     }
+    let store_data = StoreData {
+      data: data_map
+    };
+    let file_name = "store_data.json";
+    let save_result = utils_function::write_file(&store_data, file_name);
+    match save_result {
+      Err(err) => {
+        println!("{:?}", err);
+      },
+      _ => {}
+    }
+
   }
 }
 
