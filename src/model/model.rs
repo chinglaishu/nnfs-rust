@@ -1,4 +1,4 @@
-use crate::{accuracy::{Accuracy, AccuracyProcess}, activation::{ActivationReLu, ActivationSoftmax, Process}, constant::BATCH_SIZE, dense_layer::{DenseLayer, DenseLayerProcess}, loss::{LossCrossEntropy, LossProcess}, optimizer::{OptimizerAdam, OptimizerProcess}, vector};
+use crate::{accuracy::{Accuracy, AccuracyProcess}, activation::{ActivationReLu, ActivationSoftmax, Process}, constant::BATCH_SIZE, dense_layer::{DenseLayer, DenseLayerProcess}, loss::{LossCrossEntropy, LossProcess}, optimizer::{OptimizerAdam, OptimizerProcess}, utils_function, vector};
 use crate::model_trait::ModelLayerProcess;
 
 #[derive(Debug)]
@@ -23,6 +23,7 @@ pub trait ModelProcess {
   fn model_forward(&mut self, use_input_vec_x: &mut Vec<Vec<f32>>) {}
   fn model_backward(&mut self, output_vec_x: &Vec<Vec<f32>>, true_vec_y: &Vec<usize>) {}
   fn model_update_trainable_layer(&mut self) {}
+  fn save_dense_layer(&mut self) {}
 }
 
 impl ModelProcess for Model {
@@ -114,6 +115,30 @@ impl ModelProcess for Model {
       match layer {
         ModelLayer::ModelDenseLayer(dense_layer) => {
           self.optimizer.update(dense_layer);
+        },
+        _ => {}
+      }
+    }
+  }
+  fn save_dense_layer(&mut self) {
+
+    for i in 0..self.layer_vec.len() {
+      let layer = &mut self.layer_vec[i];
+      match layer {
+        ModelLayer::ModelDenseLayer(dense_layer) => {
+          let id = dense_layer.id;
+          let weight_file_name = format!("store_data/weight_{}.json", id);
+          let weight_result = utils_function::write_file(&dense_layer.weight_vec, &weight_file_name);
+
+          match weight_result {
+            Err(err) => {
+              println!(err);
+            }
+          }
+
+          let bias_file_name = format!("store_data/bias_{}.json", id);
+          utils_function::write_file(&dense_layer.bias_vec, &bias_file_name);
+
         },
         _ => {}
       }

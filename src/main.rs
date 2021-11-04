@@ -1,3 +1,5 @@
+use std::fs::File;
+
 use constant::DATA_SIZE;
 
 use crate::{accuracy::Accuracy, activation::Process, constant::{BATCH_SIZE, DENSE_LAYER_1_NEURON_NUM, DENSE_LAYER_2_NEURON_NUM, DENSE_LAYER_3_NEURON_NUM}, dense_layer::DenseLayer, loss::{LossCrossEntropy, LossProcess}, model::{Model, ModelLayer, ModelProcess}, model_trait::ModelLayerProcess, optimizer::OptimizerAdam};
@@ -15,6 +17,8 @@ use crate::{accuracy::Accuracy, activation::Process, constant::{BATCH_SIZE, DENS
 #[path = "model/model.rs"] mod model;
 #[path = "model/accuracy.rs"] mod accuracy;
 #[path = "utils/model_trait.rs"] mod model_trait;
+
+use std::io::Write;
 
 fn main() {
 
@@ -70,8 +74,9 @@ fn main() {
     predict_vec: vec![0; BATCH_SIZE],
   };
 
-  model.train(&data_vec_vec_x, &data_vec_y, 10, 1);
+  model.train(&data_vec_vec_x, &data_vec_y, 6, 1);
 
+  model.save_dense_layer();
 
   let mut test_x: Vec<Vec<f32>> = vec![vec![0.0; constant::DATA_SIZE]; constant::BATCH_SIZE];
   let mut test_y: Vec<usize> = vec![0; constant::BATCH_SIZE];
@@ -80,6 +85,18 @@ fn main() {
 
   println!("{:?}", test_x);
   println!("{:?}", test_y);
+
+  // let result = utils_function::write_file();
+  // match result {
+  //   Err(err) => {
+  //     println!("err");
+  //   },
+  //   Ok(ok) => {
+  //     println!("ok");
+  //   }
+  // }
+  // return;
+
 
   model.test(&mut test_x, &test_y);
 
@@ -151,8 +168,4 @@ fn back_main() {
   let loss_mean = loss.loss_calculate(&data_vec_vec_x, &data_vec_y);
   
   println!("loss mean: {}", loss_mean);
-
-
-
-
 }
