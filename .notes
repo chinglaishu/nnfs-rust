@@ -1,0 +1,19 @@
+Simple neural network implementation
+
+Two category of data
+
+1. x: list of number with range (0.0 - 0.1), y: 0
+2. x: list of number with range (0.9 - 1.0), y: 1
+
+Train the neural network so it can identity data 
+similar to case (1) as 0, and case (2) as 1
+
+To run the programme:
+
+cargo run [save] [train] [load]
+
+Parameter
+1. save (save the result (weight and bais) into /store_data.json)
+2. load (load the saved data (weight and bais) to dense layer)
+3. train (check if train the dense layer, if already passed load, can 
+skip this)
